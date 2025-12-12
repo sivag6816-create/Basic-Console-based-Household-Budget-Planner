@@ -16,7 +16,7 @@ This project showcases practical usage of core C++ concepts such as:
 1. Set Budget
 Assign a monthly budget for categories such as:
 
-->Food
+  Food
 ->Rent
 ->Utilities
 ->Transport
