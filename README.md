@@ -32,7 +32,7 @@ The system keeps a running total for each category.
 3. View Summary
 Displays a well-formatted summary table showing:
 
-->Category	Budget	Spent	Remaining
+  Category	Budget	Spent	Remaining
 ->Includes a TOTAL row to show full monthly overview.
 
 
