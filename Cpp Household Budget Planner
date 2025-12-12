@@ -1,0 +1,190 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+using namespace std;
+
+// Categories (fixed)
+enum Category { 
+    FOOD = 0, 
+    RENT, 
+    UTILITIES, 
+    TRANSPORT, 
+    ENTERTAINMENT, 
+    SAVINGS, 
+    CAT_COUNT 
+};
+
+// Menu options
+enum Menu { 
+    SET_BUDGET = 1, 
+    ADD_EXPENSE, 
+    VIEW_SUMMARY, 
+    RESET_MONTH, 
+    EXIT 
+};
+
+// Print the main menu
+void printMenu() {
+    cout << "\n====== Household Budget Planner ======\n"
+         << "1. Set Budget\n"
+         << "2. Add Expense\n"
+         << "3. View Summary\n"
+         << "4. Reset Month\n"
+         << "5. Exit\n"
+         << "Choose an option: ";
+}
+
+// Read a menu choice
+int readMenuChoice() {
+    int choice;
+    cin >> choice;
+    return choice;
+}
+
+// Choose category
+int readCategory(const string catNames[]) {
+    cout << "\nSelect category:\n";
+    for (int i = 0; i < CAT_COUNT; ++i) {
+        cout << (i + 1) << " - " << catNames[i] 
+             << (i < CAT_COUNT - 1 ? "  " : "\n");
+    }
+
+    cout << "Enter category: ";
+    int c;
+    cin >> c;
+
+    if (c < 1 || c > CAT_COUNT) {
+        cout << "Error: Invalid category. Please enter between 1 and " 
+             << CAT_COUNT << ".\n";
+        return -1;
+    }
+
+    return c - 1;
+}
+
+// Read positive amount
+double readAmount(const string& prompt) {
+    cout << prompt;
+    double amt;
+    cin >> amt;
+
+    if (amt <= 0) {
+        cout << "Error: Amount must be positive.\n";
+        return -1.0;
+    }
+
+    return amt;
+}
+
+// Set budget
+void setBudget(double budget[], const string catNames[]) {
+    int catIdx = readCategory(catNames);
+    if (catIdx < 0) return;
+
+    double amt = readAmount("Enter budget for " + catNames[catIdx] + " (RM): ");
+    if (amt < 0) return;
+
+    budget[catIdx] = amt;
+
+    cout << fixed << setprecision(2);
+    cout << "Budget set: " << catNames[catIdx] 
+         << " = RM" << budget[catIdx] << "\n";
+}
+
+// Add expense
+void addExpense(double spent[], const string catNames[]) {
+    int catIdx = readCategory(catNames);
+    if (catIdx < 0) return;
+
+    double amt = readAmount("Enter expense amount (RM): ");
+    if (amt < 0) return;
+
+    spent[catIdx] += amt;
+
+    cout << fixed << setprecision(2)
+         << "Added: RM" << amt << " to " << catNames[catIdx]
+         << " (Total: RM" << spent[catIdx] << ")\n";
+}
+
+// View summary
+void viewSummary(const double budget[], const double spent[], const string catNames[]) {
+    double totalBudget = 0, totalSpent = 0;
+
+    cout << "\n====== Monthly Summary ======\n";
+    cout << left << setw(15) << "Category"
+         << right << setw(14) << "Budget (RM)"
+         << setw(14) << "Spent (RM)"
+         << setw(16) << "Remaining (RM)\n";
+    cout << string(59, '-') << "\n";
+
+    cout << fixed << setprecision(2);
+
+    for (int i = 0; i < CAT_COUNT; ++i) {
+        double remain = budget[i] - spent[i];
+        totalBudget += budget[i];
+        totalSpent += spent[i];
+
+        cout << left << setw(15) << catNames[i]
+             << right << setw(14) << budget[i]
+             << setw(14) << spent[i]
+             << setw(16) << remain << "\n";
+    }
+
+    cout << string(59, '-') << "\n";
+
+    cout << left << setw(15) << "TOTAL"
+         << right << setw(14) << totalBudget
+         << setw(14) << totalSpent
+         << setw(16) << (totalBudget - totalSpent)
+         << "\n";
+}
+
+// Main program
+int main() {
+    string catNames[CAT_COUNT] = {
+        "Food", "Rent", "Utilities", "Transport", 
+        "Entertainment", "Savings"
+    };
+
+    double budget[CAT_COUNT] = {0};
+    double spent[CAT_COUNT]  = {0};
+
+    int choice;
+
+    do {
+        printMenu();
+        choice = readMenuChoice();
+
+        switch (choice) {
+            case SET_BUDGET:
+                setBudget(budget, catNames);
+                break;
+
+            case ADD_EXPENSE:
+                addExpense(spent, catNames);
+                break;
+
+            case VIEW_SUMMARY:
+                viewSummary(budget, spent, catNames);
+                break;
+
+            case RESET_MONTH:
+                for (int i = 0; i < CAT_COUNT; i++) {
+                    budget[i] = 0;
+                    spent[i] = 0;
+                }
+                cout << "Monthly data reset successfully!\n";
+                break;
+
+            case EXIT:
+                cout << "Thank you for using Household Budget Planner!\n";
+                break;
+
+            default:
+                cout << "Invalid option. Try again.\n";
+        }
+
+    } while (choice != EXIT);
+
+    return 0;
+}
